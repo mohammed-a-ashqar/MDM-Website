@@ -63,10 +63,12 @@
 								Products
 							</a>
 						@endif
+						{{-- Blogs hidden from header
 						<a href="{{ route('blogs.index') }}"
 							class="btn btn-sm header-nav-link d-none d-xl-inline-flex {{ request()->routeIs('blogs.*') ? 'is-active' : '' }}">
 							Blogs
 						</a>
+						--}}
 						<a href="{{ route('about') }}"
 							class="btn btn-sm header-nav-link d-none d-xl-inline-flex {{ request()->routeIs('about') ? 'is-active' : '' }}">
 							About
@@ -132,21 +134,25 @@
 					<a class="text-decoration-none fw-semibold" href="{{ route('products') }}">Products</a>
 				@endif
 			</li>
+			{{-- Blogs hidden from header
 			<li class="mb-3">
 				<a class="text-decoration-none fw-semibold" href="{{ route('blogs.index') }}">Blogs</a>
 			</li>
+			--}}
 			<li class="mb-3">
 				<a class="text-decoration-none fw-semibold" href="{{ route('about') }}">About</a>
 			</li>
 			<li class="mb-3">
 				<a class="text-decoration-none fw-semibold" href="{{ route('contact') }}">Contact</a>
 			</li>
+			{{-- Privacy Policy & Terms hidden from header
 			<li class="mt-4 pt-3 border-top">
 				<a class="text-decoration-none" href="{{ route('privacy') }}">Privacy Policy</a>
 			</li>
 			<li class="mt-3">
 				<a class="text-decoration-none" href="{{ route('terms') }}">Terms &amp; Conditions</a>
 			</li>
+			--}}
 		</ul>
 	</div>
 </div>
