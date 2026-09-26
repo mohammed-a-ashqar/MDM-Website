@@ -285,7 +285,7 @@ Route::get('/products', function () {
                     ->orWhere('slug', 'like', $like);
             });
         })
-        ->when($activeBrand, fn ($query) => $query->where('brand_id', $activeBrand->id))
+        ->when($brandSlug !== '', fn ($query) => $query->where('brand_id', $activeBrand->id))
         ->when($activeCategory, fn ($query) => $query->where('category_id', $activeCategory->id))
         ->when($activeSubcategory, fn ($query) => $query->where('subcategory_id', $activeSubcategory->id))
         ->orderBy('title')
@@ -302,7 +302,9 @@ Route::get('/products/{product:slug}', function (Product $product) {
         ->limit(4)
         ->get();
 
-    return view('products_details', compact('product', 'relatedProducts'));
+    $pageTitle = $product->title.' | '.$product->brand->name;
+
+    return view('products_details', compact('product', 'relatedProducts', 'pageTitle'));
 })->name('products.show');
 
 Route::get('/sitemap.xml', function () {
