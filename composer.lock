@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "29314fc18544901c15e3ecd0a7a8bd74",
+    "content-hash": "adfd11e0a0fb736e1d32e6739e0722ef",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3215,6 +3215,81 @@
                 "source": "https://github.com/Masterminds/html5-php/tree/2.10.0"
             },
             "time": "2025-07-25T09:04:22+00:00"
+        },
+        {
+            "name": "mohammed-a-ashqar/laravel-lazarus",
+            "version": "v0.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mohammed-a-ashqar/laravel-lazarus.git",
+                "reference": "1a0bcb1e34ecaa0c3475c033d5369ed8aa5648b4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mohammed-a-ashqar/laravel-lazarus/zipball/1a0bcb1e34ecaa0c3475c033d5369ed8aa5648b4",
+                "reference": "1a0bcb1e34ecaa0c3475c033d5369ed8aa5648b4",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/cache": "^11.0|^12.0",
+                "illuminate/console": "^11.0|^12.0",
+                "illuminate/contracts": "^11.0|^12.0",
+                "illuminate/database": "^11.0|^12.0",
+                "illuminate/events": "^11.0|^12.0",
+                "illuminate/http": "^11.0|^12.0",
+                "illuminate/queue": "^11.0|^12.0",
+                "illuminate/support": "^11.0|^12.0",
+                "php": "^8.2",
+                "symfony/process": "^7.0"
+            },
+            "require-dev": {
+                "larastan/larastan": "^3.0",
+                "laravel/pint": "^1.18",
+                "orchestra/testbench": "^9.0|^10.0",
+                "pestphp/pest": "^3.0",
+                "pestphp/pest-plugin-laravel": "^3.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Alashqar\\Lazarus\\LazarusServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Alashqar\\Lazarus\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mohammed Alashqar",
+                    "email": "mohammedname2002@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Self-healing Laravel apps: turns a production exception into a proven, reviewed pull request with a failing test, a minimal patch and red-to-green evidence.",
+            "keywords": [
+                "ai",
+                "automated-fixes",
+                "error-monitoring",
+                "exceptions",
+                "laravel",
+                "llm",
+                "ollama",
+                "pull-request",
+                "self-healing"
+            ],
+            "support": {
+                "issues": "https://github.com/mohammed-a-ashqar/laravel-lazarus/issues",
+                "source": "https://github.com/mohammed-a-ashqar/laravel-lazarus/tree/v0.1.1"
+            },
+            "time": "2026-09-26T20:08:56+00:00"
         },
         {
             "name": "monolog/monolog",
