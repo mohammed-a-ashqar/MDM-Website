@@ -12,11 +12,11 @@ use Filament\Tables\Table;
 
 class HomePageResource extends Resource
 {
-    $model = HomePage::class;
+    protected static ?string $model = HomePage::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-home';
 
-    protected static ?string $navigationGroup = 'Site'
+    protected static ?string $navigationGroup = 'Site';
 
     protected static ?int $navigationSort = 4;
 
