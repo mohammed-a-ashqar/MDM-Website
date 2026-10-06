@@ -85,9 +85,9 @@ html[data-bs-theme='dark'] .mx-header {
     height: 3.4rem;
 }
 
-body.mx-dark-top .mx-header:not(.is-solid) .mx-header__logo img,
-html[data-bs-theme='dark'] .mx-header__logo img {
-    filter: brightness(0) invert(1);
+/* Logo always keeps its original brand colours — never recolour it */
+.mx-header .mx-header__logo img {
+    filter: none !important;
 }
 
 /* Nav */
@@ -385,10 +385,6 @@ html.mx-menu-open .mx-header .mx-header__bar {
     box-shadow: none;
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
-}
-
-html.mx-menu-open .mx-header__logo img {
-    filter: brightness(0) invert(1);
 }
 
 @media (min-width: 576px) {

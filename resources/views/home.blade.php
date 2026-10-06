@@ -217,10 +217,33 @@
 
         <div class="hero vh-100 position-relative d-flex align-items-end">
             <div class="video-cover">
-                <video id="hero-video" title="Hero video" playsinline muted autoplay loop preload="metadata"
+                <video id="hero-video" title="Hero video" playsinline webkit-playsinline muted autoplay loop preload="auto"
                     class="border-0">
-                    <source src="{{ asset('assets/video/11.mp4') }} " type="video/mp4">
+                    <source src="{{ asset('assets/video/11.mp4') }}" type="video/mp4">
                 </video>
+                <script>
+                    (function () {
+                        var v = document.getElementById('hero-video');
+                        if (!v) return;
+                        v.muted = true;
+                        v.defaultMuted = true;
+                        var kick = function () {
+                            if (!v.paused) return;
+                            var p = v.play();
+                            if (p && p.catch) p.catch(function () {});
+                        };
+                        kick();
+                        v.addEventListener('loadeddata', kick);
+                        v.addEventListener('canplay', kick);
+                        window.addEventListener('load', kick);
+                        document.addEventListener('visibilitychange', function () {
+                            if (!document.hidden) kick();
+                        });
+                        ['touchstart', 'scroll', 'click'].forEach(function (e) {
+                            window.addEventListener(e, kick, { passive: true, once: true });
+                        });
+                    })();
+                </script>
                 <div class="card-img-overlay mx-hero-overlay"></div>
                 <div class="mx-hero-noise" aria-hidden="true"></div>
             </div>
