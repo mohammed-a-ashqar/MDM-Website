@@ -133,70 +133,37 @@
     @endphp
 
     <main id="content" class="wrapper layout-page page-product-detail">
-        <section class="z-index-2 position-relative pb-2 mb-0">
-            <div class="bg-body-secondary mb-0">
-                <div class="container">
-                    <nav class="py-4 lh-30px" aria-label="breadcrumb">
-                        <ol class="breadcrumb justify-content-center py-1 mb-0">
-                            <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('products') }}">Products</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">{{ $product->title }}</li>
-                        </ol>
-                    </nav>
-                </div>
-            </div>
-        </section>
-
-        <section class="product-detail-hero pt-8 pt-lg-10 pb-12 pb-lg-16">
-            <div class="container">
-                <div class="row g-4 g-lg-5 align-items-start">
-                    <div class="col-md-6 pe-lg-13">
-                        @if (count($galleryUrls) > 0)
-                            <div class="product-detail-gallery-wrap">
-                                <div id="product-detail-gallery" class="row g-3">
-                                    @foreach ($galleryUrls as $url)
-                                        <div class="{{ $loop->first ? 'col-12' : 'col-6' }}">
-                                            <a href="{{ $url }}" class="d-block overflow-hidden hover-zoom-in">
-                                                <img src="{{ $url }}" class="img-fluid w-100"
-                                                    alt="{{ $product->title }}" width="540" height="720"
-                                                    @if (! $loop->first) loading="lazy" decoding="async" @endif>
-                                            </a>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @else
-                            <div class="product-detail-gallery-wrap">
-                                <div class="overflow-hidden rounded-3">
-                                    <img src="{{ $placeholder }}" class="img-fluid w-100" alt="{{ $product->title }}">
-                                </div>
-                            </div>
-                        @endif
+        @php
+            $pdImages = count($galleryUrls) ? $galleryUrls : [$placeholder];
+            $pdProps = [
+                'product' => $product->toIslandArray(),
+                'images' => array_values($pdImages),
+                'crumbs' => [
+                    ['label' => 'Home', 'url' => url('/')],
+                    ['label' => 'Products', 'url' => route('products')],
+                    ['label' => $product->title],
+                ],
+                'primary' => ['label' => 'Request this product', 'url' => route('contact')],
+                'secondary' => filled($product->how_to_use)
+                    ? ['label' => 'How to use', 'url' => '#product-info']
+                    : ['label' => 'Full details', 'url' => '#product-info'],
+            ];
+        @endphp
+        <section class="mx-pd-section">
+            <div class="container" data-island="ProductDetail" data-props="{{ json_encode($pdProps) }}">
+                <div class="mx-ssr row g-5 align-items-center">
+                    <div class="col-md-6">
+                        <img src="{{ $pdImages[0] }}" class="img-fluid rounded-4 bg-white" alt="{{ $product->title }}">
                     </div>
-
-                    <div class="col-md-6 pt-md-0 pt-8">
-                        @if ($product->shouldDisplayFlashBadge())
-                            <div class="mb-4">
-                                <span
-                                    class="badge badge-product-flash {{ $product->flashBadgeCssClass() }} px-3 py-2">{{ $product->flash_badge }}</span>
-                            </div>
-                        @endif
-
-                        <h1 class="product-detail-title mb-5 pb-1">{{ $product->title }}</h1>
-
-                        @if (filled($product->description))
-                            <p class="product-detail-lead mb-0">
-                                {{ \Illuminate\Support\Str::limit(html_entity_decode(strip_tags($product->description), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 320) }}
-                            </p>
-                        @endif
+                    <div class="col-md-6">
+                        <h1 class="text-white">{{ $product->title }}</h1>
                     </div>
                 </div>
             </div>
         </section>
 
-        <div class="border-top border-opacity-10 w-100"></div>
 
-        <section class="product-detail-tabs-section container pt-14 pb-12 pt-lg-16 pb-lg-20">
+        <section id="product-info" class="product-detail-tabs-section container pt-14 pb-12 pt-lg-16 pb-lg-20">
             <div class="collapse-tabs">
                 <ul class="nav nav-tabs border-0 justify-content-center pb-10 pb-md-12 d-none d-md-flex gap-md-2"
                     id="productTabs" role="tablist">
@@ -270,12 +237,16 @@
             <div class="border-top border-opacity-10 w-100"></div>
             <section class="container pt-14 pb-15 pt-lg-16 pb-lg-20">
                 <div class="text-center mb-10 mb-lg-11">
-                    <h2 class="h3 mb-0 product-related-heading">You may also like</h2>
+                    <p class="mx-eyebrow justify-content-center">Keep exploring</p>
+                    <h2 class="mx-reveal-words mx-related-heading mb-0">You may also like</h2>
                 </div>
-                <div class="row gy-50px justify-content-center">
-                    @foreach ($relatedProducts as $related)
-                        @include('partials.product-grid-card', ['product' => $related])
-                    @endforeach
+                <div data-island="ProductGallery"
+                    data-props="{{ json_encode(['products' => $relatedProducts->map->toIslandArray()->values(), 'toolbar' => false]) }}">
+                    <div class="mx-ssr row gy-50px justify-content-center">
+                        @foreach ($relatedProducts as $related)
+                            @include('partials.product-grid-card', ['product' => $related])
+                        @endforeach
+                    </div>
                 </div>
             </section>
         @endif

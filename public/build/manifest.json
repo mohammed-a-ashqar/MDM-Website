@@ -1,0 +1,11 @@
+{
+  "resources/js/islands.jsx": {
+    "file": "assets/islands-BU0dDn38.js",
+    "name": "islands",
+    "src": "resources/js/islands.jsx",
+    "isEntry": true,
+    "css": [
+      "assets/islands-Bh0YUkFw.css"
+    ]
+  }
+}

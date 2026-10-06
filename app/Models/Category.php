@@ -35,8 +35,8 @@ class Category extends Model
             }
         });
 
-        static::saved(fn () => Cache::forget('nav_categories'));
-        static::deleted(fn () => Cache::forget('nav_categories'));
+        static::saved(fn () => Cache::deleteMultiple(['nav_categories', 'footer_categories']));
+        static::deleted(fn () => Cache::deleteMultiple(['nav_categories', 'footer_categories']));
     }
 
     public function getRouteKeyName(): string
@@ -63,6 +63,11 @@ class Category extends Model
     public function subcategories(): HasMany
     {
         return $this->hasMany(Subcategory::class)->orderBy('sort_order')->orderBy('name');
+    }
+
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class);
     }
 
     public function activeSubcategories(): HasMany

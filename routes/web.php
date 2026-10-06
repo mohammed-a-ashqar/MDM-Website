@@ -83,9 +83,18 @@ Route::post('/contact', function (Request $request) {
         'submitted_at' => now(),
     ]);
 
-    $to = filled($contact->email) ? (string) $contact->email : (string) config('mail.from.address');
-    if ($to !== '') {
-        Mail::to($to)->send(new \App\Mail\ContactMessageSubmitted($contactMessage));
+    $to = (string) (config('mail.contact_to') ?: ($contact->email ?: config('mail.from.address')));
+
+    // Mail problems (bad SMTP credentials, host down) must never break the form for the visitor:
+    // the message is already saved in the admin panel, so log and carry on.
+    try {
+        if ($to !== '') {
+            Mail::to($to)->send(new \App\Mail\ContactMessageSubmitted($contactMessage));
+        }
+        Mail::to($contactMessage->email, $contactMessage->name)
+            ->send(new \App\Mail\ContactMessageReceived($contactMessage));
+    } catch (\Throwable $e) {
+        report($e);
     }
 
     $redirectTo = trim((string) $request->input('redirect_to', ''));
@@ -110,10 +119,15 @@ Route::get('/', function () {
     );
 
     $featuredProducts = Product::query()
+        ->with(['brand', 'category'])
         ->where('is_featured', true)
         ->orderBy('featured_sort')
         ->orderByDesc('id')
         ->get();
+
+    if ($featuredProducts->isEmpty()) {
+        $featuredProducts = Product::query()->with(['brand', 'category'])->latest('id')->limit(6)->get();
+    }
 
     $brands = Brand::query()
         ->where('is_active', true)
@@ -132,7 +146,18 @@ Route::get('/', function () {
         ->limit(12)
         ->get();
 
-    return view('home', compact('featuredProducts', 'brands', 'home', 'blogs', 'contact'));
+    $categories = Category::query()
+        ->where('is_active', true)
+        ->withCount('products')
+        ->with([
+            'activeSubcategories',
+            'products' => fn ($q) => $q->select('id', 'category_id', 'images')->latest('id'),
+        ])
+        ->orderBy('sort_order')
+        ->orderBy('name')
+        ->get();
+
+    return view('home', compact('featuredProducts', 'brands', 'home', 'blogs', 'contact', 'categories'));
 })->name('home');
 
 Route::get('/blogs', function () {
@@ -278,6 +303,7 @@ Route::get('/products', function () {
         : null;
 
     $products = Product::query()
+        ->with(['brand', 'category'])
         ->when($search !== '', function ($query) use ($search) {
             $like = '%'.$search.'%';
             $query->where(function ($q) use ($like) {
@@ -285,7 +311,7 @@ Route::get('/products', function () {
                     ->orWhere('slug', 'like', $like);
             });
         })
-        ->when($brandSlug !== '', fn ($query) => $query->where('brand_id', $activeBrand->id))
+        ->when($brandSlug !== '', fn ($query) => $query->where('brand_id', $activeBrand?->id))
         ->when($activeCategory, fn ($query) => $query->where('category_id', $activeCategory->id))
         ->when($activeSubcategory, fn ($query) => $query->where('subcategory_id', $activeSubcategory->id))
         ->orderBy('title')
@@ -295,14 +321,19 @@ Route::get('/products', function () {
 })->name('products');
 
 Route::get('/products/{product:slug}', function (Product $product) {
+    $product->loadMissing(['brand', 'category']);
+
     $relatedProducts = Product::query()
+        ->with(['brand', 'category'])
         ->whereKeyNot($product->getKey())
         ->orderByDesc('is_featured')
         ->orderBy('title')
         ->limit(4)
         ->get();
 
-    $pageTitle = $product->title.' | '.$product->brand->name;
+    $pageTitle = $product->brand
+        ? $product->title.' | '.$product->brand->name
+        : $product->title;
 
     return view('products_details', compact('product', 'relatedProducts', 'pageTitle'));
 })->name('products.show');

@@ -28,11 +28,21 @@
 
   @include('layouts.seo')
   @include('layouts.head')
+  <link rel="stylesheet" href="{{ asset('assets/css/mx-header.css') }}?v={{ filemtime(public_path('assets/css/mx-header.css')) }}">
+  <link rel="stylesheet" href="{{ asset('assets/css/mx-site.css') }}?v={{ filemtime(public_path('assets/css/mx-site.css')) }}">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  {{-- React motion islands. Guarded so a missing build never takes the site down. --}}
+  @if (file_exists(public_path('hot')) || file_exists(public_path('build/manifest.json')))
+      @viteReactRefresh
+      @vite('resources/js/islands.jsx')
+  @endif
 </head>
 
 <body @class([
 	'site-page-home' => request()->is('/'),
 	'site-page-inner' => ! request()->is('/'),
+	'mx-dark-top' => request()->routeIs('home', 'products', 'products.show'),
 ])>
 
 @include('layouts.main-headerbar')
@@ -47,6 +57,8 @@
 
 
 @include('layouts.footer-scripts')
+<script src="{{ asset('assets/js/mx-header.js') }}?v={{ filemtime(public_path('assets/js/mx-header.js')) }}"></script>
+<script src="{{ asset('assets/js/mx-site.js') }}?v={{ filemtime(public_path('assets/js/mx-site.js')) }}"></script>
 
 </body>
 </html>

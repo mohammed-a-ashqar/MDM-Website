@@ -28,22 +28,23 @@
 @section('content')
 
     <main id="content" class="wrapper layout-page">
-        <section class="pb-15 pb-lg-20">
+        @php
+            $activeBrand = $activeBrand ?? null;
+            $activeCategory = $activeCategory ?? null;
+            $activeSubcategory = $activeSubcategory ?? null;
+            $pageHeading = $activeBrand->name ?? $activeSubcategory->name ?? $activeCategory->name ?? 'Products';
+        @endphp
+        <section class="mx-products-hero pb-12 pb-lg-15">
             <div class="container">
-                @php
-                    $activeBrand = $activeBrand ?? null;
-                    $activeCategory = $activeCategory ?? null;
-                    $activeSubcategory = $activeSubcategory ?? null;
-                    $pageHeading = $activeBrand->name ?? $activeSubcategory->name ?? $activeCategory->name ?? 'Products';
-                @endphp
-                <div class="mb-13 text-center pb-3" data-animate="fadeInUp">
+                <div class="text-center pt-6" data-animate="fadeInUp">
                     @if ($activeBrand && $activeBrand->logoUrl())
                         <div class="mb-4">
                             <img src="{{ $activeBrand->logoUrl() }}" alt="{{ $activeBrand->name }}"
-                                class="img-fluid d-inline-block" style="max-height: 90px; width: auto;">
+                                class="img-fluid d-inline-block rounded-3 bg-white p-2" style="max-height: 90px; width: auto;">
                         </div>
                     @endif
-                    <h1 class="h3 mb-0">{{ $pageHeading }}</h1>
+                    <p class="mx-eyebrow justify-content-center">MDM Derma catalog</p>
+                    <h1 class="mb-0">{{ $pageHeading }}</h1>
                     @if (!empty($search))
                         <p class="text-body-secondary mb-0 mt-3">Results for &ldquo;{{ $search }}&rdquo;</p>
                     @elseif ($activeBrand)
@@ -56,21 +57,33 @@
                         <p class="text-body-secondary mb-0 mt-3">All items from your catalog</p>
                     @endif
                     @if ($activeBrand || $activeCategory || $activeSubcategory)
-                        <a href="{{ route('products') }}" class="btn btn-sm header-nav-link mt-3">
+                        <a href="{{ route('products') }}" class="btn btn-sm mx-back mt-3">
                             <i class="bi bi-arrow-left me-1" aria-hidden="true"></i> All products
                         </a>
                     @endif
                 </div>
+            </div>
+        </section>
 
-                <div class="row gy-50px justify-content-center">
-                    @forelse ($products as $product)
-                        @include('partials.product-grid-card', ['product' => $product])
-                    @empty
-                        <div class="col-12 text-center py-10">
-                            <p class="text-body-secondary mb-0">No products yet. Add them in the admin panel under Shop
-                                &rarr; Products.</p>
-                        </div>
-                    @endforelse
+        <section class="pt-10 pt-lg-13 pb-15 pb-lg-20">
+            <div class="container">
+                @php
+                    $galleryProps = [
+                        'products' => $products->map->toIslandArray()->values(),
+                        'emptyText' => $products->isEmpty() ? 'No products yet.' : 'No products match your filters.',
+                    ];
+                @endphp
+                <div data-island="ProductGallery" data-props="{{ json_encode($galleryProps) }}">
+                    <div class="mx-ssr row gy-50px justify-content-center">
+                        @forelse ($products as $product)
+                            @include('partials.product-grid-card', ['product' => $product])
+                        @empty
+                            <div class="col-12 text-center py-10">
+                                <p class="text-body-secondary mb-0">No products yet. Add them in the admin panel under Shop
+                                    &rarr; Products.</p>
+                            </div>
+                        @endforelse
+                    </div>
                 </div>
             </div>
         </section>

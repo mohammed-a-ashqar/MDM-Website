@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "adfd11e0a0fb736e1d32e6739e0722ef",
+    "content-hash": "055a7c61c8e9f9dccef80ed6e023e438",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3218,16 +3218,16 @@
         },
         {
             "name": "mohammed-a-ashqar/laravel-lazarus",
-            "version": "v0.1.1",
+            "version": "v0.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mohammed-a-ashqar/laravel-lazarus.git",
-                "reference": "1a0bcb1e34ecaa0c3475c033d5369ed8aa5648b4"
+                "reference": "387b66e79323c77b26e0dcde7380e04ab8df9360"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mohammed-a-ashqar/laravel-lazarus/zipball/1a0bcb1e34ecaa0c3475c033d5369ed8aa5648b4",
-                "reference": "1a0bcb1e34ecaa0c3475c033d5369ed8aa5648b4",
+                "url": "https://api.github.com/repos/mohammed-a-ashqar/laravel-lazarus/zipball/387b66e79323c77b26e0dcde7380e04ab8df9360",
+                "reference": "387b66e79323c77b26e0dcde7380e04ab8df9360",
                 "shasum": ""
             },
             "require": {
@@ -3287,9 +3287,9 @@
             ],
             "support": {
                 "issues": "https://github.com/mohammed-a-ashqar/laravel-lazarus/issues",
-                "source": "https://github.com/mohammed-a-ashqar/laravel-lazarus/tree/v0.1.1"
+                "source": "https://github.com/mohammed-a-ashqar/laravel-lazarus/tree/v0.2.1"
             },
-            "time": "2026-09-26T20:08:56+00:00"
+            "time": "2026-09-27T06:19:37+00:00"
         },
         {
             "name": "monolog/monolog",

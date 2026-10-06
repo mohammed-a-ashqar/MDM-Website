@@ -1,158 +1,116 @@
 @php
     $mdmLogoPath = 'assets/images/mdm.png';
-    $mdmLogoFile = public_path($mdmLogoPath);
-    $hasMdmLogo = file_exists($mdmLogoFile);
+    $hasMdmLogo = file_exists(public_path($mdmLogoPath));
     $mdmLogoUrl = $hasMdmLogo ? asset($mdmLogoPath) : null;
     $brandName = config('app.name', 'MDM');
+    $navBrands = $navBrands ?? collect();
+
+    $navItems = [
+        ['label' => 'Home', 'url' => route('home'), 'active' => request()->routeIs('home')],
+        ['label' => 'Products', 'url' => route('products'), 'active' => request()->routeIs('products', 'products.show'), 'mega' => $navBrands->isNotEmpty()],
+        ['label' => 'About', 'url' => route('about'), 'active' => request()->routeIs('about')],
+        ['label' => 'Contact', 'url' => route('contact'), 'active' => request()->routeIs('contact')],
+    ];
 @endphp
 
-<header id="header"
-	class="header header-sticky header-transparent header-sticky-smart disable-transition-all position-absolute start-0 end-0 z-index-5">
-	<div class="sticky-area">
-		<div
-			class="main-header nav navbar navbar-dark bg-transparent navbar-expand-xl transition-all-1 py-4 py-xl-5">
-			<div class="container-wide container">
-				<div class="header-bar-grid">
-					<a href="{{ route('home') }}"
-						class="header-bar-brand navbar-brand d-inline-flex align-items-center py-2 my-0 flex-shrink-0 text-decoration-none"
-						aria-label="{{ $brandName }} — Home">
-						@if ($mdmLogoUrl)
-							<img src="{{ $mdmLogoUrl }}" alt="{{ $brandName }}" class="img-fluid d-block header-bar-logo">
-						@else
-							<span class="fs-1 fw-bold lh-sm text-primary">{{ $brandName }}</span>
-						@endif
-					</a>
-					<div class="header-bar-icons d-flex align-items-center flex-shrink-0">
-						<button type="button"
-							class="btn btn-sm btn-outline-light rounded-pill header-ctrl-outline border d-inline-flex d-xl-none align-items-center justify-content-center"
-							style="width: 2.5rem; height: 2.5rem;"
-							data-bs-toggle="offcanvas"
-							data-bs-target="#offCanvasNavBar"
-							aria-controls="offCanvasNavBar"
-							aria-label="Open menu">
-							<i class="bi bi-list" aria-hidden="true"></i>
-						</button>
-						@if (!empty($navBrands) && $navBrands->isNotEmpty())
-							<div class="dropdown d-none d-xl-inline-flex header-products-dropdown">
-								<a href="{{ route('products') }}" id="headerProductsMenu"
-									class="btn btn-sm header-nav-link dropdown-toggle {{ request()->routeIs('products') || request()->routeIs('products.show') ? 'is-active' : '' }}"
-									role="button"
-									data-bs-toggle="dropdown" aria-expanded="false">
-									Products
-								</a>
-								<ul class="dropdown-menu dropdown-menu-end shadow border-0 py-2 header-products-menu"
-									aria-labelledby="headerProductsMenu"
-									style="min-width: 16rem; max-height: 70vh; overflow-y: auto;">
-									<li>
-										<a class="dropdown-item fw-semibold" href="{{ route('products') }}">All products</a>
-									</li>
-									<li><hr class="dropdown-divider my-2"></li>
-									@foreach ($navBrands as $navBrand)
-										<li>
-											<a class="dropdown-item fw-semibold"
-												href="{{ route('products', ['brand' => $navBrand->slug]) }}">
-												{{ $navBrand->name }}
-											</a>
-										</li>
-									@endforeach
-								</ul>
-							</div>
-						@else
-							<a href="{{ route('products') }}"
-								class="btn btn-sm header-nav-link d-none d-xl-inline-flex {{ request()->routeIs('products') || request()->routeIs('products.show') ? 'is-active' : '' }}">
-								Products
-							</a>
-						@endif
-						{{-- Blogs hidden from header
-						<a href="{{ route('blogs.index') }}"
-							class="btn btn-sm header-nav-link d-none d-xl-inline-flex {{ request()->routeIs('blogs.*') ? 'is-active' : '' }}">
-							Blogs
-						</a>
-						--}}
-						<a href="{{ route('about') }}"
-							class="btn btn-sm header-nav-link d-none d-xl-inline-flex {{ request()->routeIs('about') ? 'is-active' : '' }}">
-							About
-						</a>
-						<a href="{{ route('contact') }}"
-							class="btn btn-sm header-cta d-none d-xl-inline-flex align-items-center">
-							Contact
-						</a>
-						<button type="button" id="header-theme-toggle"
-							class="btn btn-sm btn-outline-light rounded-pill header-ctrl-outline border d-inline-flex align-items-center justify-content-center"
-							style="width: 2.5rem; height: 2.5rem;" aria-label="Toggle color theme">
-							<i class="bi bi-moon-fill theme-icon-when-light" aria-hidden="true"></i>
-							<i class="bi bi-sun-fill theme-icon-when-dark d-none" aria-hidden="true"></i>
-						</button>
-					</div>
-					<form class="header-bar-search d-flex align-items-center min-w-0" method="get"
-						action="{{ route('products') }}" role="search">
-						<label for="header-search-q" class="visually-hidden">Search products</label>
-						<input id="header-search-q" type="search" name="q" value="{{ old('q', request('q')) }}"
-							class="form-control form-control-sm header-search-input rounded-pill px-3"
-							placeholder="Search products" autocomplete="off">
-						<button type="submit"
-							class="btn btn-sm rounded-pill px-3 header-search-btn flex-shrink-0"
-							aria-label="Search">
-							<i class="bi bi-search" aria-hidden="true"></i>
-						</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
+<header id="mx-header" class="mx-header" data-mx-header>
+    <div class="mx-header__bar">
+        <a href="{{ route('home') }}" class="mx-header__logo" aria-label="{{ $brandName }} — Home">
+            @if ($mdmLogoUrl)
+                <img src="{{ $mdmLogoUrl }}" alt="{{ $brandName }}" width="120" height="60">
+            @else
+                <span>{{ $brandName }}</span>
+            @endif
+        </a>
+
+        <nav class="mx-header__nav" aria-label="Main">
+            <ul>
+                @foreach ($navItems as $item)
+                    <li @class(['has-mega' => $item['mega'] ?? false])>
+                        <a href="{{ $item['url'] }}" @class(['mx-nav-link', 'is-active' => $item['active']])
+                            @if ($item['active']) aria-current="page" @endif>
+                            <span class="mx-roll" data-text="{{ $item['label'] }}"><span>{{ $item['label'] }}</span></span>
+                            @if ($item['mega'] ?? false)
+                                <svg class="mx-nav-caret" width="10" height="10" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            @endif
+                        </a>
+                        @if ($item['mega'] ?? false)
+                            <div class="mx-mega">
+                                <div class="mx-mega__inner">
+                                    <div class="mx-mega__intro">
+                                        <p class="mx-eyebrow">Our brands</p>
+                                        <p class="mx-mega__title">Explore the full catalog</p>
+                                        <a href="{{ route('products') }}" class="mx-mega__all">All products →</a>
+                                    </div>
+                                    <ul class="mx-mega__list">
+                                        @foreach ($navBrands as $navBrand)
+                                            <li>
+                                                <a href="{{ route('products', ['brand' => $navBrand->slug]) }}">
+                                                    <span>{{ $navBrand->name }}</span>
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                        @endif
+                    </li>
+                @endforeach
+            </ul>
+        </nav>
+
+        <div class="mx-header__tools">
+            <button type="button" class="mx-icon-btn" data-mx-search-open aria-label="Search products">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <button type="button" id="header-theme-toggle" class="mx-icon-btn" aria-label="Toggle color theme">
+                <i class="bi bi-moon-fill theme-icon-when-light" aria-hidden="true"></i>
+                <i class="bi bi-sun-fill theme-icon-when-dark d-none" aria-hidden="true"></i>
+            </button>
+            <a href="{{ route('contact') }}" class="mx-header__cta">
+                <span class="mx-roll" data-text="Get in touch"><span>Get in touch</span></span>
+            </a>
+            <button type="button" class="mx-burger" data-mx-menu-toggle aria-label="Open menu" aria-expanded="false" aria-controls="mx-menu">
+                <span></span><span></span>
+            </button>
+        </div>
+    </div>
 </header>
 
-<div id="offCanvasNavBar" class="offcanvas offcanvas-end" tabindex="-1" aria-labelledby="offCanvasNavBarLabel">
-	<div class="offcanvas-header">
-		<h5 class="offcanvas-title" id="offCanvasNavBarLabel">{{ $brandName }}</h5>
-		<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-	</div>
-	<div class="offcanvas-body">
-		<ul class="list-unstyled mb-0">
-			<li class="mb-3">
-				<a class="text-decoration-none fw-semibold" href="{{ route('home') }}">Home</a>
-			</li>
-			<li class="mb-3">
-				@if (!empty($navBrands) && $navBrands->isNotEmpty())
-					<div class="d-flex align-items-center justify-content-between">
-						<a class="text-decoration-none fw-semibold" href="{{ route('products') }}">Products</a>
-						<button type="button" class="btn btn-sm btn-link text-decoration-none p-0 ms-2 collapsed" data-bs-toggle="collapse" data-bs-target="#offcanvasProductsMenu" aria-expanded="false" aria-controls="offcanvasProductsMenu" aria-label="Toggle brands">
-							<i class="bi bi-chevron-down" aria-hidden="true"></i>
-						</button>
-					</div>
-					<ul id="offcanvasProductsMenu" class="collapse list-unstyled ps-3 mt-2 mb-0">
-						@foreach ($navBrands as $navBrand)
-							<li class="mb-2">
-								<a class="text-decoration-none fw-medium"
-									href="{{ route('products', ['brand' => $navBrand->slug]) }}">
-									{{ $navBrand->name }}
-								</a>
-							</li>
-						@endforeach
-					</ul>
-				@else
-					<a class="text-decoration-none fw-semibold" href="{{ route('products') }}">Products</a>
-				@endif
-			</li>
-			{{-- Blogs hidden from header
-			<li class="mb-3">
-				<a class="text-decoration-none fw-semibold" href="{{ route('blogs.index') }}">Blogs</a>
-			</li>
-			--}}
-			<li class="mb-3">
-				<a class="text-decoration-none fw-semibold" href="{{ route('about') }}">About</a>
-			</li>
-			<li class="mb-3">
-				<a class="text-decoration-none fw-semibold" href="{{ route('contact') }}">Contact</a>
-			</li>
-			{{-- Privacy Policy & Terms hidden from header
-			<li class="mt-4 pt-3 border-top">
-				<a class="text-decoration-none" href="{{ route('privacy') }}">Privacy Policy</a>
-			</li>
-			<li class="mt-3">
-				<a class="text-decoration-none" href="{{ route('terms') }}">Terms &amp; Conditions</a>
-			</li>
-			--}}
-		</ul>
-	</div>
+{{-- Full-screen mobile menu --}}
+<div id="mx-menu" class="mx-menu" aria-hidden="true" data-lenis-prevent>
+    <div class="mx-menu__bg"></div>
+    <nav class="mx-menu__nav" aria-label="Mobile">
+        <ul>
+            @foreach ($navItems as $i => $item)
+                <li style="--i: {{ $i }}">
+                    <a href="{{ $item['url'] }}" @class(['is-active' => $item['active']])>
+                        <small>0{{ $i + 1 }}</small>{{ $item['label'] }}
+                    </a>
+                </li>
+            @endforeach
+        </ul>
+        @if ($navBrands->isNotEmpty())
+            <div class="mx-menu__brands" style="--i: {{ count($navItems) }}">
+                <p class="mx-eyebrow">Brands</p>
+                <div>
+                    @foreach ($navBrands as $navBrand)
+                        <a href="{{ route('products', ['brand' => $navBrand->slug]) }}">{{ $navBrand->name }}</a>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+    </nav>
+</div>
+
+{{-- Full-screen search --}}
+<div class="mx-search-overlay" aria-hidden="true" data-mx-search>
+    <button type="button" class="mx-round mx-search-overlay__close" data-mx-search-close aria-label="Close search">✕</button>
+    <form method="get" action="{{ route('products') }}" role="search" class="mx-search-overlay__form">
+        <p class="mx-eyebrow">Search the catalog</p>
+        <label for="mx-search-q" class="visually-hidden">Search products</label>
+        <input id="mx-search-q" type="search" name="q" value="{{ request('q') }}" placeholder="What are you looking for?" autocomplete="off">
+        <p class="mx-search-overlay__hint">Press Enter to search · Esc to close</p>
+    </form>
 </div>

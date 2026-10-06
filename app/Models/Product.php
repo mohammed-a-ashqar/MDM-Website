@@ -171,6 +171,26 @@ class Product extends Model
         return $urls[0] ?? null;
     }
 
+    /**
+     * Shape used by the React product islands (showcase + gallery).
+     *
+     * @return array<string, mixed>
+     */
+    public function toIslandArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'title' => (string) $this->title,
+            'url' => route('products.show', $this),
+            'image' => $this->mainImageUrl() ?? asset('assets/images/products/product-11-330x440.jpg'),
+            'brand' => $this->brand?->name,
+            'category' => $this->category?->name,
+            'badge' => $this->shouldDisplayFlashBadge() ? $this->flash_badge : null,
+            'featured' => (bool) $this->is_featured,
+            'excerpt' => Str::limit(trim(preg_replace('/\s+/', ' ', html_entity_decode(strip_tags((string) $this->description)))), 170),
+        ];
+    }
+
     public function saleDiscountPercent(): ?int
     {
         if (! $this->isOnSale()) {

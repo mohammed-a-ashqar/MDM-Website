@@ -1,135 +1,92 @@
-<footer class="pt-14 pt-lg-20 pb-16 footer">
-    <div class="container container-xxl pt-4">
-        <div class="row">
-            <div class="col-lg-5 col-12 mb-11 mb-lg-0">
+@php
+    $footerContact = \Illuminate\Support\Facades\Cache::remember(
+        \App\Models\ContactPage::CACHE_KEY,
+        \App\Models\ContactPage::CACHE_TTL_SECONDS,
+        fn () => \App\Models\ContactPage::query()->first()
+    );
+    $footerCategories = \Illuminate\Support\Facades\Cache::remember('footer_categories', 300, fn () =>
+        \App\Models\Category::query()->where('is_active', true)->orderBy('sort_order')->orderBy('name')->limit(6)->get(['name', 'slug'])
+    );
+    $footerBrands = ($navBrands ?? collect())->take(6);
+    $brandName = config('app.name', 'MDM');
+@endphp
 
-                <h3 class="mb-6 ">Care for Your Skin, <br> Care for Your Beauty</h3>
-                <p class="pe-xl-24 mb-lg-11">Professional dermatology and skincare you can trust. Let your skin reflect how
-                    you feel—not only the years.</p>
-                <a class="fw-semibold fs-6 text-decoration-none" href="{{ route('contact') }}">
-                    Contact us <svg class="icon ms-5">
-                        <use xlink:href="#icon-arrow-right"></use>
-                    </svg>
-                </a>
-
-            </div>
-            <div class="col-lg col-md-4 col-12 mb-11 mb-lg-0">
-                <h3 class="fs-5 mb-6 ">Company</h3>
-
-                <ul class="list-unstyled mb-0 fw-medium ">
-
-                    <li class="pt-3 mb-4">
-                        <a href="{{ route('about') }}" class="text-body">About us</a>
-                    </li>
-
-                    <li class="pt-3 mb-4">
-                        <a href="{{ route('contact') }}" class="text-body">Careers</a>
-                    </li>
-
-                    <li class="pt-3 mb-4">
-                        <a href="{{ route('contact') }}" class="text-body">Store locations</a>
-                    </li>
-
-                    <li class="pt-3 mb-4">
-                        <a href="{{ route('blogs.index') }}" class="text-body">Our blog</a>
-                    </li>
-
-                    <li class="pt-3 mb-4">
-                        <a href="{{ route('about') }}#about_testimonials" class="text-body">Reviews</a>
-                    </li>
-
-                </ul>
-
-            </div>
-            <div class="col-lg col-md-4 col-12 mb-11 mb-lg-0">
-                <h3 class="fs-5 mb-6 ">Useful links</h3>
-
-                <ul class="list-unstyled mb-0 fw-medium ">
-
-                    <li class="pt-3 mb-4">
-                        <a href="{{ route('products') }}" class="text-body">New products</a>
-                    </li>
-
-                    <li class="pt-3 mb-4">
-                        <a href="{{ route('home') }}#because_you_need_time_for_yourself_2" class="text-body">Best
-                            sellers</a>
-                    </li>
-
-                    <li class="pt-3 mb-4">
-                        <a href="{{ route('home') }}#special_offer_save_on_sets_2" class="text-body">Bundle &amp; save</a>
-                    </li>
-
-                    <li class="pt-3 mb-4">
-                        <a href="{{ route('contact') }}" class="text-body">Online gift card</a>
-                    </li>
-
-                </ul>
-
-            </div>
-            <div class="col-lg col-md-4 col-12 mb-11 mb-lg-0">
-                <h3 class="fs-5 mb-6 ">Information</h3>
-
-                <ul class="list-unstyled mb-0 fw-medium ">
-
-                    <li class="pt-3 mb-4">
-                        <a href="{{ route('contact') }}" class="text-body">Start a return</a>
-                    </li>
-
-                    <li class="pt-3 mb-4">
-                        <a href="{{ route('contact') }}" class="text-body">Contact us</a>
-                    </li>
-
-                    <li class="pt-3 mb-4">
-                        <a href="{{ route('contact') }}" class="text-body">Shipping FAQ</a>
-                    </li>
-
-                    <li class="pt-3 mb-4">
-                        <a href="{{ route('terms') }}" class="text-body">Terms &amp; conditions</a>
-                    </li>
-
-                    <li class="pt-3 mb-4">
-                        <a href="{{ route('privacy') }}" class="text-body">Privacy policy</a>
-                    </li>
-
-                </ul>
-
-            </div>
-        </div>
-        <div class="row align-items-center mt-0 mt-lg-20 pt-lg-4">
-            <div
-                class="col-12 col-md-6 col-lg-4 d-flex align-items-center order-2 order-lg-1 mt-7 mt-md-11 mt-lg-0">
-                <p class="mb-0">© {{ date('Y') }} {{ config('app.copyright_holder') }}</p>
-                <ul class="list-inline fs-18px ms-6 mb-0">
-                    <li class="list-inline-item me-8">
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                    </li>
-                    <li class="list-inline-item me-8">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    </li>
-                    <li class="list-inline-item me-8">
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                    </li>
-                    <li class="list-inline-item">
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                    </li>
-                </ul>
-            </div>
-            <div class="col-sm-12 col-lg-4 text-md-center order-1 order-lg-2 ">
-                <a class="d-inline-block text-decoration-none" href="{{ route('home') }}"
-                    title="{{ config('app.name', 'MDM') }} — Home">
-                    @if (file_exists(public_path('assets/images/mdm.png')))
-                        <img class="img-fluid footer-brand-logo" src="{{ asset('assets/images/mdm.png') }}" width="179"
-                            height="26" alt="{{ config('app.name', 'MDM') }}">
-                    @else
-                        <span class="fs-4 fw-bold text-body-emphasis">{{ config('app.name', 'MDM') }}</span>
-                    @endif
+<footer class="mx-footer">
+    <div class="mx-footer__glow" aria-hidden="true"></div>
+    <div class="container mx-footer__inner">
+        <div class="mx-footer__top">
+            <div class="mx-footer__intro">
+                <p class="mx-footer__eyebrow">{{ $brandName }} Derma</p>
+                <h2 class="mx-footer__headline">Care for your skin.<br><em>Care for your beauty.</em></h2>
+                <a href="{{ route('contact') }}" class="mx-footer__cta">
+                    <span>Start a conversation</span>
+                    <span class="mx-footer__cta-icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </span>
                 </a>
             </div>
-            <div class="col-sm-12 col-md-6 col-lg-4 order-3 text-md-end mt-7 mt-md-11 mt-lg-0">
-                <img data-src="{{ asset('assets/images/shop/footer.png') }}" width="313" height="28" alt="Paypal"
-                    class="img-fluid lazy-image">
-            </div>
+
+            <nav class="mx-footer__cols" aria-label="Footer">
+                <div>
+                    <h3 class="mx-footer__h">Explore</h3>
+                    <ul>
+                        <li><a href="{{ route('home') }}">Home</a></li>
+                        <li><a href="{{ route('products') }}">Products</a></li>
+                        <li><a href="{{ route('about') }}">About us</a></li>
+                        <li><a href="{{ route('contact') }}">Contact</a></li>
+                    </ul>
+                </div>
+
+                @if ($footerCategories->isNotEmpty())
+                    <div>
+                        <h3 class="mx-footer__h">Categories</h3>
+                        <ul>
+                            @foreach ($footerCategories as $fc)
+                                <li><a href="{{ route('products', ['category' => $fc->slug]) }}">{{ $fc->name }}</a></li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                @if ($footerBrands->isNotEmpty())
+                    <div>
+                        <h3 class="mx-footer__h">Brands</h3>
+                        <ul>
+                            @foreach ($footerBrands as $fb)
+                                <li><a href="{{ route('products', ['brand' => $fb->slug]) }}">{{ $fb->name }}</a></li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                @if ($footerContact && (filled($footerContact->email) || filled($footerContact->mobile) || filled($footerContact->hotline)))
+                    <div>
+                        <h3 class="mx-footer__h">Get in touch</h3>
+                        <ul>
+                            @if (filled($footerContact->email))
+                                <li><a href="mailto:{{ $footerContact->email }}">{{ $footerContact->email }}</a></li>
+                            @endif
+                            @if (filled($footerContact->mobile))
+                                <li><a href="tel:{{ preg_replace('/[^0-9+]/', '', $footerContact->mobile) }}">{{ $footerContact->mobile }}</a></li>
+                            @endif
+                            @if (filled($footerContact->hotline))
+                                <li><a href="tel:{{ preg_replace('/[^0-9+]/', '', $footerContact->hotline) }}">{{ $footerContact->hotline }}</a></li>
+                            @endif
+                        </ul>
+                    </div>
+                @endif
+            </nav>
         </div>
 
+        <div class="mx-footer__bottom">
+            <p>© {{ date('Y') }} {{ config('app.copyright_holder') }}. All rights reserved.</p>
+            <ul>
+                <li><a href="{{ route('terms') }}">Terms &amp; conditions</a></li>
+                <li><a href="{{ route('privacy') }}">Privacy policy</a></li>
+                <li><button type="button" class="mx-footer__top-btn" data-mx-to-top>Back to top ↑</button></li>
+            </ul>
+        </div>
     </div>
+
+    <div class="mx-footer__word" aria-hidden="true">{{ $brandName }}</div>
 </footer>

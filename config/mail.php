@@ -16,6 +16,9 @@ return [
 
     'default' => env('MAIL_MAILER', 'log'),
 
+    // Inbox that receives website contact-form messages (falls back to the Contact page email).
+    'contact_to' => env('MAIL_CONTACT_TO'),
+
     /*
     |--------------------------------------------------------------------------
     | Mailer Configurations

@@ -221,19 +221,134 @@
                     class="border-0">
                     <source src="{{ asset('assets/video/11.mp4') }} " type="video/mp4">
                 </video>
-                <div class="card-img-overlay"></div>
+                <div class="card-img-overlay mx-hero-overlay"></div>
+                <div class="mx-hero-noise" aria-hidden="true"></div>
             </div>
-            <div data-animate="fadeInDown" class="container container-wide pb-15 p-xl-15 position-relative">
-
-                <div class="hero-content">
-                    <div data-animate="fadeInDown">
+            <div class="container container-wide pb-10 px-xl-15 position-relative">
+                @php
+                    $heroProps = [
+                        'brand' => 'MDM',
+                        'eyebrow' => 'Medical Aesthetics',
+                        'lines' => ['Advanced', 'Dermatology,'],
+                        'words' => ['Redefined.', 'Perfected.', 'Elevated.'],
+                        'primary' => ['label' => 'Explore products', 'url' => route('products')],
+                        'secondary' => ['label' => 'Contact', 'url' => '#get-in-touch'],
+                    ];
+                @endphp
+                <div class="hero-content" data-island="HeroIntro" data-props="{{ json_encode($heroProps) }}">
+                    <div class="mx-ssr text-white">
+                        <h1 class="text-white">Advanced Dermatology, Redefined.</h1>
+                        <a href="{{ route('products') }}" class="btn btn-light rounded-pill px-6 mt-4">Explore products</a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
+    @php
+        $marqueeRows = [
+            ['dir' => 'left', 'outline' => false, 'items' => ['Mesotherapy', 'Skin Rejuvenation', 'Anti-Aging', 'Hair Restoration']],
+            ['dir' => 'right', 'outline' => true, 'items' => ['Professional Skincare', 'Pigmentation', 'Hydration', 'Clinical Results']],
+        ];
+    @endphp
+    <section class="mx-marquee" aria-hidden="true">
+        @foreach ($marqueeRows as $row)
+            <div class="mx-marquee__row {{ $row['outline'] ? 'mx-marquee__row--outline' : '' }}" data-dir="{{ $row['dir'] }}">
+                <div class="mx-marquee__track">
+                    @for ($copy = 0; $copy < 2; $copy++)
+                        <div class="mx-marquee__group">
+                            @foreach ($row['items'] as $item)
+                                <span class="mx-marquee__item">{{ $item }}</span>
+                                <span class="mx-marquee__star">✦</span>
+                            @endforeach
+                        </div>
+                    @endfor
+                </div>
+            </div>
+        @endforeach
+    </section>
+
     @include('partials.science-aesthetics', ['home' => $home, 'sectionId' => 'science-aesthetics', 'extraClass' => ''])
+
+    <section class="mx-statement" aria-label="Our promise">
+        <div class="container">
+            <p class="mx-eyebrow">Our promise</p>
+            <p class="mx-statement__text" data-mx-words>
+                We bring the world’s most trusted dermatology brands to the clinics shaping <em>tomorrow’s skin</em> — with science you can measure and results you can see.
+            </p>
+            <div class="mx-statement__foot">
+                <span>MDM Derma · Medical Aesthetic Solutions</span>
+                <a href="{{ route('about') }}" class="mx-link">Discover our story →</a>
+            </div>
+        </div>
+    </section>
+
+    @if ($featuredProducts->isNotEmpty())
+        @php
+            $showcaseProps = [
+                'eyebrow' => 'Featured formulations',
+                'heading' => 'Results you can see.',
+                'intro' => 'Hand-picked products our clinical partners rely on every day. Drag, swipe or use the arrows to explore.',
+                'allUrl' => route('products'),
+                'products' => $featuredProducts->map->toIslandArray()->values(),
+            ];
+        @endphp
+        <section id="featured-products" class="mx-showcase-section" aria-label="Featured products">
+            <div class="container-fluid px-9" data-island="ProductShowcase" data-props="{{ json_encode($showcaseProps) }}">
+                <div class="mx-ssr py-14">
+                    <h2 class="text-white mb-8">Featured products</h2>
+                    <div class="row gy-50px">
+                        @foreach ($featuredProducts as $product)
+                            @include('partials.product-grid-card', ['product' => $product])
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </section>
+    @endif
+
+    @if ($categories->isNotEmpty())
+        <section id="shop-by-category" class="mx-cats" aria-labelledby="mx-cats-heading">
+            <div class="container">
+                <div class="mx-cats__head">
+                    <div>
+                        <p class="mx-eyebrow">Shop by category</p>
+                        <h2 id="mx-cats-heading" class="mx-cats__title mx-reveal-words">Find the right solution</h2>
+                    </div>
+                    <a href="{{ route('products') }}" class="mx-cats__all">All products →</a>
+                </div>
+
+                <ol class="mx-cats__list">
+                    @foreach ($categories as $category)
+                        @php
+                            $preview = $category->products->first()?->mainImageUrl();
+                        @endphp
+                        <li class="mx-cats__item">
+                            <a href="{{ route('products', ['category' => $category->slug]) }}" class="mx-cats__row"
+                                @if ($preview) data-preview="{{ $preview }}" @endif>
+                                <span class="mx-cats__num">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                                <span class="mx-cats__name">
+                                    <span class="mx-roll" data-text="{{ $category->name }}"><span>{{ $category->name }}</span></span>
+                                </span>
+                                @if ($category->activeSubcategories->isNotEmpty())
+                                    <span class="mx-cats__subs">
+                                        {{ $category->activeSubcategories->take(3)->pluck('name')->join(' · ') }}
+                                    </span>
+                                @endif
+                                <span class="mx-cats__count">
+                                    {{ $category->products_count }} {{ Str::plural('product', $category->products_count) }}
+                                </span>
+                                <span class="mx-cats__arrow" aria-hidden="true">
+                                    <svg width="22" height="22" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </span>
+                            </a>
+                        </li>
+                    @endforeach
+                </ol>
+            </div>
+            <div class="mx-cats__preview" aria-hidden="true"><img alt=""></div>
+        </section>
+    @endif
 
     @php
         $clinicalImgFallback = 'assets/images/banner/banner-29.jpg';
